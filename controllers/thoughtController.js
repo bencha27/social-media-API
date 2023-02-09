@@ -1,4 +1,4 @@
-const { Thought } = require("../models");
+const { Thought, User, Reaction } = require("../models");
 
 // Find all thoughts
 async function getThoughts (req, res) {
@@ -14,6 +14,16 @@ async function getThoughts (req, res) {
 async function createThought (req, res) {
   try {
     const newThought = await Thought.create(req.body);
+    // Update the user with the ID of the thought
+    const thoughtUser = await User.findOneAndUpdate(
+      { username: req.body.username },
+      { $addToSet: { thoughts: newThought._id }},
+      { new: true },
+    );
+    if (!thoughtUser) {
+      res.status(404).json({ message: "Thought created, but user not found "});
+      return;
+    }
     res.status(200).json(newThought);
   } catch (err) {
     res.status(500).json(err);
@@ -68,4 +78,40 @@ async function deleteThought (req, res) {
   }
 };
 
-module.exports = { getThoughts, createThought, getThoughtById, updateThought, deleteThought };
+// Create a reaction to a thought
+async function addReaction (req, res) {
+  try {
+    const updatedThought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $addToSet: { reactions: req.body }},
+      { new: true },
+    );
+    if (!updatedThought) {
+      res.status(404).json({ message: "Thought not found "});
+      return;
+    }
+    res.status(200).json({ message: "Added a reaction" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+// Delete a reaction from a thought
+async function deleteReaction (req, res) {
+  try {
+    const updatedThought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $pull: { reactions: { _id: req.params.reactionId} }},
+      { new: true },
+    );
+    if (!updatedThought) {
+      res.status(404).json({ message: "Thought not found "});
+      return;
+    }
+    res.status(200).json({ message: "Removed a reaction" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+module.exports = { getThoughts, createThought, getThoughtById, updateThought, deleteThought, addReaction, deleteReaction };
