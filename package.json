@@ -1,0 +1,29 @@
+{
+  "name": "social-media-app-api",
+  "version": "1.0.0",
+  "description": "API for a social media web application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index",
+    "seed": "node utils/seed",
+    "dev": "nodemon index"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bencha27/social-media-API.git"
+  },
+  "author": "Benjamin Cha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bencha27/social-media-API/issues"
+  },
+  "homepage": "https://github.com/bencha27/social-media-API#readme"
+}
